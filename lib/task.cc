@@ -126,7 +126,7 @@ Task::master() const
 inline void
 Task::add_pending_locked(RouterThread *thread)
 {
-    if (!_pending_nextptr.x) {
+    if (_pending_nextptr.x <= 1) {
         _pending_nextptr.x = 2;
         thread->_pending_tail->t = this;
         thread->_pending_tail = &_pending_nextptr;
