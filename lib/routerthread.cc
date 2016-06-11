@@ -575,9 +575,12 @@ RouterThread::process_pending()
     while (my_pending.x > 1) {
         Task *t = my_pending.t;
         my_pending = t->_pending_nextptr;
-        t->_pending_nextptr.x = 0;
+        // do not set _pending_nextptr to 0 until we're really done processing
+        t->_pending_nextptr.x = 1;
         click_fence();
         t->process_pending(this);
+        if (t->_pending_nextptr.x == 1)
+            t->_pending_nextptr.x = 0;
     }
 }
 
